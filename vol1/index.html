@@ -38,6 +38,7 @@
             font-family: 'Gowun Batang', serif;
             overflow-x: hidden;
             transition: background 0.3s;
+            min-height: 100dvh;
         }
 
         .nav-bar {
@@ -67,17 +68,26 @@
         #bgm-volume-wrap { display: flex; align-items: center; gap: 5px; }
         #bgm-volume { width: 60px; height: 4px; accent-color: var(--accent); cursor: pointer; }
 
-        #viewer-container {
-            width: 100vw; min-height: 100vh;
+        #book-container {
+            width: 100vw; min-height: 100dvh;
             display: flex; align-items: flex-start; justify-content: center;
             padding-top: 80px; 
-            padding-bottom: 120px; 
+            padding-bottom: 160px; 
             box-sizing: border-box;
         }
 
         .book-mode-wrap { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; }
         #book-canvas { box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .page { background-color: #fff; overflow: hidden; }
+        .page { 
+            background-color: #fff; 
+            overflow-y: auto; 
+            height: 100dvh; 
+            padding-bottom: 160px; 
+            box-sizing: border-box;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .page::-webkit-scrollbar { display: none; }
         .page img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 
         .scroll-mode-wrap {
@@ -161,7 +171,7 @@
             #bgm-volume { width: 45px; }
             .scroll-mode-wrap { max-width: 100%; }
             .page img, .scroll-mode-wrap img { width: 100% !important; height: auto !important; object-fit: contain !important; }
-            #viewer-container { padding-top: 60px; padding-bottom: 110px; }
+            #book-container { padding-top: 60px; padding-bottom: 160px; }
             .radio-player-fixed { height: 80px; }
             .sermon-vol-wrap { display: none; }
         }
@@ -183,7 +193,7 @@
         </div>
     </nav>
 
-    <div id="viewer-container">
+    <div id="book-container">
         <div id="book-mode" class="book-mode-wrap">
             <div class="page-arrow arrow-left" onclick="pageFlip.flipPrev()">❮</div>
             <div id="book-canvas"></div>
@@ -200,7 +210,7 @@
             </div>
             <div class="radio-center">
                 <div class="marquee-wrap">
-                    <div class="marquee-text">12월호: 소속인가, 증거인가? (로마서 12:1-2)</div>
+                    <div class="marquee-text">12월호: 기드온의 300용사: 시선의 전환</div>
                 </div>
             </div>
             <div class="radio-right">
@@ -227,7 +237,7 @@
     <script>
         const PAGE_FILES = ["1 (1).jpg", "1 (2).jpg", "1 (3).jpg", "1 (4).jpg", "1 (5).jpg", "1 (6).jpg", "1 (7).jpg", "1 (8).jpg", "1 (9).jpg", "1 (10).jpg", "1 (11).jpg", "1 (12).jpg", "1 (13).jpg", "1 (14).jpg", "1 (15).jpg"];
         const VOL_ID = "vol1";
-        const BUILD_TIME = "1769437523";
+        const BUILD_TIME = "1769513289";
         const BGM_RANGE = [1, 999];
         const HAS_SERMON = true;
         

@@ -89,13 +89,32 @@ padding-bottom: calc(120px + env(safe-area-inset-bottom));
             scrollbar-width: none;
         }
         .page::-webkit-scrollbar { display: none; }
-        .page img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+        .page img { 
+            width: 100%; height: 100%; 
+            object-fit: contain; 
+            background: #fff; 
+            transition: transform 0.1s ease-out;
+            transform-origin: center center;
+            user-select: none;
+            -webkit-user-drag: none;
+            touch-action: none; /* 제스처 직접 제어를 위해 기본 동작 방지 */
+        }
+
+        /* 줌 작동 중 배경 스크롤이나 넘김 방지용 */
+        .zoom-lock { overflow: hidden !important; touch-action: none !important; }
 
         .scroll-mode-wrap {
             max-width: 1000px; margin: 0 auto;
             display: none; flex-direction: column; gap: 0; width: 100%;
         }
-        .scroll-mode-wrap img { width: 100%; height: auto; display: block; object-fit: contain; }
+        .scroll-mode-wrap img { 
+            width: 100%; height: auto; 
+            display: block; 
+            object-fit: contain; 
+            transition: transform 0.1s ease-out;
+            transform-origin: center center;
+            touch-action: none;
+        }
 
         .radio-player-fixed {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
@@ -238,7 +257,7 @@ padding-bottom: calc(120px + env(safe-area-inset-bottom));
     <script>
         const PAGE_FILES = ["1 (1).jpg", "1 (2).jpg", "1 (3).jpg", "1 (4).jpg", "1 (5).jpg", "1 (6).jpg", "1 (7).jpg", "1 (8).jpg", "1 (9).jpg", "1 (10).jpg", "1 (11).jpg", "1 (12).jpg", "1 (13).jpg", "1 (14).jpg", "1 (15).jpg"];
         const VOL_ID = "vol1";
-        const BUILD_TIME = "1769517131";
+        const BUILD_TIME = "1769521349";
         const BGM_RANGE = [1, 999];
         const HAS_SERMON = true;
         
@@ -268,6 +287,10 @@ padding-bottom: calc(120px + env(safe-area-inset-bottom));
                     imgs.forEach((img, idx) => {
                         if (img && scrollY > img.offsetTop) activeIdx = idx;
                     });
+                    if (window.lastScrolledIdx !== activeIdx) {
+                        resetAllZooms();
+                        window.lastScrolledIdx = activeIdx;
+                    }
                     checkBgm(activeIdx + 1);
                 }
             });
@@ -395,13 +418,117 @@ padding-bottom: calc(120px + env(safe-area-inset-bottom));
             const htmlPages = PAGE_FILES.map(f => {
                 const div = document.createElement('div');
                 div.className = 'page';
-                div.innerHTML = `<img src="${f}?v=${BUILD_TIME}">`;
+                const img = document.createElement('img');
+                img.src = `${f}?v=${BUILD_TIME}`;
+                attachZoomEvents(img);
+                div.appendChild(img);
                 return div;
             });
             pageFlip.loadFromHTML(htmlPages);
             pageFlip.on('flip', (e) => {
+                resetAllZooms();
                 checkBgm(e.data + 1);
             });
+        }
+
+        // --- 핀치 줌 & 팬 로직 ---
+        let zoomState = {
+            scale: 1,
+            lastScale: 1,
+            translateX: 0,
+            translateY: 0,
+            lastX: 0,
+            lastY: 0,
+            isZooming: false,
+            initialDist: 0,
+            activeImg: null
+        };
+
+        function attachZoomEvents(img) {
+            img.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    zoomState.isZooming = true;
+                    zoomState.activeImg = img;
+                    zoomState.initialDist = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    document.body.classList.add('zoom-lock');
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else if (e.touches.length === 1) {
+                    zoomState.lastX = e.touches[0].pageX;
+                    zoomState.lastY = e.touches[0].pageY;
+                    // 확대 상태에서는 1방향 이동(Pan)을 감지하기 위해 일단 기록
+                    if (zoomState.scale > 1) {
+                        zoomState.activeImg = img;
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                }
+            }, { passive: false });
+
+            img.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2 && zoomState.isZooming) {
+                    const currentDist = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    const zoomFactor = currentDist / zoomState.initialDist;
+                    zoomState.scale = Math.min(Math.max(zoomState.lastScale * zoomFactor, 1), 4);
+                    applyTransform(img);
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else if (e.touches.length === 1 && zoomState.scale > 1) {
+                    const deltaX = e.touches[0].pageX - zoomState.lastX;
+                    const deltaY = e.touches[0].pageY - zoomState.lastY;
+                    zoomState.translateX += deltaX;
+                    zoomState.translateY += deltaY;
+                    zoomState.lastX = e.touches[0].pageX;
+                    zoomState.lastY = e.touches[0].pageY;
+                    applyTransform(img);
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, { passive: false });
+
+            img.addEventListener('touchend', (e) => {
+                if (e.touches.length < 2) {
+                    zoomState.isZooming = false;
+                    zoomState.lastScale = zoomState.scale;
+                    if (zoomState.scale <= 1.05) {
+                        resetZoom(img);
+                        document.body.classList.remove('zoom-lock');
+                    }
+                }
+            }, { passive: false });
+        }
+
+        function applyTransform(img) {
+            if (!img) return;
+            img.style.transform = `scale(${zoomState.scale}) translate(${zoomState.translateX / zoomState.scale}px, ${zoomState.translateY / zoomState.scale}px)`;
+        }
+
+        function resetZoom(img) {
+            if (!img) return;
+            img.style.transform = `scale(1) translate(0px, 0px)`;
+            if (zoomState.activeImg === img) {
+                zoomState.scale = 1;
+                zoomState.lastScale = 1;
+                zoomState.translateX = 0;
+                zoomState.translateY = 0;
+            }
+        }
+
+        function resetAllZooms() {
+            const imgs = document.querySelectorAll('.page img, .scroll-mode-wrap img');
+            imgs.forEach(resetZoom);
+            document.body.classList.remove('zoom-lock');
+            zoomState.scale = 1;
+            zoomState.lastScale = 1;
+            zoomState.translateX = 0;
+            zoomState.translateY = 0;
+            zoomState.activeImg = null;
         }
 
         function initScrollMode() {
@@ -411,6 +538,7 @@ padding-bottom: calc(120px + env(safe-area-inset-bottom));
                 const img = document.createElement('img');
                 img.src = `${f}?v=${BUILD_TIME}`;
                 img.loading = 'lazy';
+                attachZoomEvents(img);
                 scrollWrap.appendChild(img);
             });
         }

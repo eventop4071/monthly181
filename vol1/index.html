@@ -72,7 +72,8 @@
             width: 100vw; min-height: 100dvh;
             display: flex; align-items: flex-start; justify-content: center;
             padding-top: 80px; 
-            padding-bottom: 160px; 
+            /* 160px 지우고 이거 넣으세요 */
+padding-bottom: calc(120px + env(safe-area-inset-bottom));
             box-sizing: border-box;
         }
 
@@ -82,7 +83,7 @@
             background-color: #fff; 
             overflow-y: auto; 
             height: 100dvh; 
-            padding-bottom: 160px; 
+            padding-bottom: calc(120px + env(safe-area-inset-bottom));
             box-sizing: border-box;
             -ms-overflow-style: none;
             scrollbar-width: none;
@@ -97,7 +98,7 @@
         .scroll-mode-wrap img { width: 100%; height: auto; display: block; object-fit: contain; }
 
         .radio-player-fixed {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 90px;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
             background: var(--radio-bg); z-index: 2000;
             display: flex; flex-direction: column;
             border-top: 2px solid var(--radio-point);
@@ -172,7 +173,7 @@
             .scroll-mode-wrap { max-width: 100%; }
             .page img, .scroll-mode-wrap img { width: 100% !important; height: auto !important; object-fit: contain !important; }
             #book-container { padding-top: 60px; padding-bottom: 160px; }
-            .radio-player-fixed { height: 80px; }
+            .radio-player-fixed { height: 60px; }
             .sermon-vol-wrap { display: none; }
         }
     </style>
@@ -237,7 +238,7 @@
     <script>
         const PAGE_FILES = ["1 (1).jpg", "1 (2).jpg", "1 (3).jpg", "1 (4).jpg", "1 (5).jpg", "1 (6).jpg", "1 (7).jpg", "1 (8).jpg", "1 (9).jpg", "1 (10).jpg", "1 (11).jpg", "1 (12).jpg", "1 (13).jpg", "1 (14).jpg", "1 (15).jpg"];
         const VOL_ID = "vol1";
-        const BUILD_TIME = "1769513289";
+        const BUILD_TIME = "1769517131";
         const BGM_RANGE = [1, 999];
         const HAS_SERMON = true;
         

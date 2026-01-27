@@ -69,24 +69,29 @@
         #bgm-volume { width: 60px; height: 4px; accent-color: var(--accent); cursor: pointer; }
 
         #book-container {
-            width: 100vw; min-height: 100dvh;
-            display: flex; align-items: flex-start; justify-content: center;
+            width: 100vw; 
+            height: 100dvh;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
             padding-top: 80px; 
-            /* 160px 지우고 이거 넣으세요 */
-padding-bottom: calc(120px + env(safe-area-inset-bottom));
+            padding-bottom: 80px; /* 오디오 플레이어 높이 + 여유 */
+            padding-bottom: calc(85px + env(safe-area-inset-bottom));
             box-sizing: border-box;
+            overflow: hidden;
         }
 
         .book-mode-wrap { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; }
         #book-canvas { box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .page { 
             background-color: #fff; 
-            overflow-y: auto; 
-            height: 100dvh; 
-            padding-bottom: calc(120px + env(safe-area-inset-bottom));
+            overflow: hidden; /* 페이지 내부 스크롤 제거 (잘림 원인) */
+            height: 100%; 
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             box-sizing: border-box;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
         .page::-webkit-scrollbar { display: none; }
         .page img { 
@@ -191,7 +196,10 @@ padding-bottom: calc(120px + env(safe-area-inset-bottom));
             #bgm-volume { width: 45px; }
             .scroll-mode-wrap { max-width: 100%; }
             .page img, .scroll-mode-wrap img { width: 100% !important; height: auto !important; object-fit: contain !important; }
-            #book-container { padding-top: 60px; padding-bottom: 160px; }
+            #book-container { 
+                padding-top: 70px; 
+                padding-bottom: calc(75px + env(safe-area-inset-bottom)); 
+            }
             .radio-player-fixed { height: 60px; }
             .sermon-vol-wrap { display: none; }
         }
@@ -257,7 +265,7 @@ padding-bottom: calc(120px + env(safe-area-inset-bottom));
     <script>
         const PAGE_FILES = ["1.jpg"];
         const VOL_ID = "vol3";
-        const BUILD_TIME = "1769521349";
+        const BUILD_TIME = "1769550838";
         const BGM_RANGE = [1, 999];
         const HAS_SERMON = false;
         

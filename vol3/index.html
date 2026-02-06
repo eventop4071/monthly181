@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026년 2월호 - 월간 181 </title>
     <meta property="og:title" content="2026년 2월호 - 월간 181 ">
-    <meta property="og:description" content="새 술은 새 부대에, 2025년을 여는 신년 감사 특집.">
+    <meta property="og:description" content="요나서로 보는 하나님의 마음.">
     <meta property="og:image" content="../covers/3.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
@@ -215,7 +215,7 @@
         <button class="nav-btn" onclick="toggleTheme()" title="테마 변경">🎨</button>
         <button class="nav-btn" onclick="toggleGrid(true)" title="모아보기">▦</button>
         
-        <div id="bgm-volume-wrap" style="display:none;">
+        <div id="bgm-volume-wrap" style="display:flex;">
             <button id="btn-bgm" class="nav-btn" onclick="manualToggleBgm()" title="BGM 끄기/켜기">🎵</button>
             <input type="range" id="bgm-volume" min="0" max="1" step="0.05" value="0.3" oninput="updateBgmVolume(this.value)">
         </div>
@@ -230,7 +230,7 @@
         <div id="scroll-mode" class="scroll-mode-wrap"></div>
     </div>
 
-    <div id="radio-section" class="radio-player-fixed" style="display:none;">
+    <div id="radio-section" class="radio-player-fixed" style="display:flex;">
         <div class="radio-main">
             <div class="radio-ctrl">
                 <button class="play-btn" onclick="toggleSermon()" id="sermon-play-btn">▶</button>
@@ -238,7 +238,7 @@
             </div>
             <div class="radio-center">
                 <div class="marquee-wrap">
-                    <div class="marquee-text">2월호: Comming soon</div>
+                    <div class="marquee-text">2월호: 아버지의 마음</div>
                 </div>
             </div>
             <div class="radio-right">
@@ -263,11 +263,11 @@
     <audio id="sermon-audio"><source src="../audios/vol3.mp3" type="audio/mpeg"></audio>
 
     <script>
-        const PAGE_FILES = ["1.jpg"];
+        const PAGE_FILES = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg", "21.jpg"];
         const VOL_ID = "vol3";
-        const BUILD_TIME = "1769602920";
+        const BUILD_TIME = "1770378819";
         const BGM_RANGE = [1, 999];
-        const HAS_SERMON = false;
+        const HAS_SERMON = true;
         
         let pageFlip = null;
         let currentMode = localStorage.getItem('viewMode_' + VOL_ID) || 'book';
